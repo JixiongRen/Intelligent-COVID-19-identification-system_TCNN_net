@@ -10,9 +10,9 @@ from torchsummary import summary  # 查看网络结构
 '''
 
 
-class TCNN(nn.Module):
+class TCNN0(nn.Module):
     def __init__(self):
-        super(TCNN, self).__init__()  # 继承父类的初始化方法
+        super(TCNN0, self).__init__()  # 继承父类的初始化方法
         # b*1*32000 -> b*32*32000
         self.conv1 = nn.Conv1d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=2, dilation=2) # 卷积核太小，改 7 或 9 查文献
         # b*32*32000 -> b*32*32000
@@ -66,5 +66,4 @@ class TCNN(nn.Module):
         x = self.fc2(x)
         x = self.dropout(x)
         return x
-
 
