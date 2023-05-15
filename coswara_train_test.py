@@ -6,16 +6,19 @@ import os
 import torch
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
+import sys
 
 import torch.utils.data as data
 from torch import nn, optim, device
-import torch.optim.lr_scheduler as lr_scheduler
+
 
 # TCNN 模型
 from TCNN1 import TCNN1
 from TCNN0 import TCNN0
 from TCNN2 import TCNN2
 from TCNN3 import TCNN3
+from TCNN4 import TCNN4
+
 
 # 绘图
 import matplotlib.pyplot as plt
@@ -24,6 +27,10 @@ from sklearn.metrics import confusion_matrix
 
 # 损失函数
 import focalloss
+
+# 余弦退火学习率衰减机制
+from torch.optim.lr_scheduler import CosineAnnealingLR
+import torch.optim.lr_scheduler as lr_scheduler
 
 def preprocess_data(audio_file_path):
     '''将音频数据转化为numpy数组'''
@@ -208,6 +215,9 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
             _, preds = torch.max(outputs, 1)
             train_acc += torch.sum(preds == label.data)
             train_acc_per_batch += torch.sum(preds == label.data)
+            # 更新学习率
+            scheduler.step()
+
 
         train_loss /= len(train_loader.dataset)
         train_acc /= len(train_loader.dataset)
@@ -237,9 +247,6 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         # 计算验证集的损失和准确率
         val_losses.append(val_loss)
         val_accuracies.append(val_acc.item()) # type: ignore
-
-        # 更新学习率
-        scheduler.step()
         # 检查验证损失是否有改善
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -250,9 +257,9 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         # 判断是否停止训练
         if no_improvement_count > patience:
             '若希望引入早停机制，则取消第1,2行注释；若不早停则取消第三行注释'
-            # print(f"Early stopping at epoch {epoch+1}")
-            # break
-            continue
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+            # continue
 
     '''训练结束，绘图'''
     # 绘制损失曲线
@@ -320,7 +327,7 @@ def test(model, test_loader, criterion):
 
     # 绘制ROC曲线
     plt.figure()
-    plt.plot(fpr, tpr, label='ROC curve (auc = %0.2f)' % roc_auc)
+    plt.plot(fpr, tpr, label='ROC curve (auc = %0.4f)' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
@@ -359,16 +366,19 @@ def test(model, test_loader, criterion):
 # 定义超参数
 """
 # 加载模型
-model = TCNN3()
+model = TCNN4()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.load_state_dict(torch.load('pretrainmodel.pth', map_location=device))
 
 # 定义损失函数和优化器
-# criterion = nn.CrossEntropyLoss()
-criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
+criterion = nn.CrossEntropyLoss()
+# criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
 optimizer = optim.Adam(model.parameters(), lr=0.00001) # 使用最基本的，
-scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 num_epochs = 64
+# StepLR()学习率调整策略，每30个epoch学习率变为原来的0.1
+# scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
+# CosineAnnealingLR()学习率调整策略，每个epoch学习率都在变化，变化范围为[0.000001, 0.00001]
+scheduler = CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=0.000001)
 
 '''早停相关'''
 best_val_loss = float('inf')  # 初始化最佳验证损失

@@ -41,9 +41,15 @@ class TCNN2(nn.Module):
         self.dropout = nn.Dropout(0.3)
         self.relu4 = nn.ReLU()
         self.fc2 = nn.Linear(128, 2)
+        
+        # 卷积层初始化
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
+                # 随机初始化卷积核权重
                 nn.init.xavier_uniform_(m.weight)
+                # 打印卷积核权重
+                print("Conv1d Weight is :")
+                print(m.weight)
 
     def forward(self, x):
         x = x.view(x.size(0), 1, -1)
@@ -62,7 +68,6 @@ class TCNN2(nn.Module):
         x = self.relu3(x)
         x = self.pool3(x)
         x = x.view(-1, 128 * 2646)
-        x = self.dropout(x)
         x = self.dropout(x)
         x = self.fc1(x)
         x = self.relu3(x)

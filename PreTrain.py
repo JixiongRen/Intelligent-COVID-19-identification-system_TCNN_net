@@ -6,7 +6,7 @@ import os
 import torch
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
-from TCNN3 import TCNN3
+
 
 import torch.utils.data as data
 from torch import nn, optim
@@ -16,7 +16,8 @@ import torch.optim.lr_scheduler as lr_scheduler
 from TCNN1 import TCNN1
 from TCNN0 import TCNN0
 from TCNN2 import TCNN2
-
+from TCNN3 import TCNN3
+from TCNN4 import TCNN4
 # 绘图
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -250,9 +251,9 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         # 判断是否停止训练
         if no_improvement_count > patience:
             '若希望引入早停机制，则取消第1,2行注释；若不早停则取消第三行注释'
-            # print(f"Early stopping at epoch {epoch+1}")
-            # break
-            continue
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+            # continue
 
     '''训练结束，绘图'''
     # 绘制损失曲线
@@ -358,14 +359,18 @@ def test(model, test_loader, criterion):
 # 定义超参数
 """
 # 加载模型
-model = TCNN3()
+model = TCNN4()
 
 # 定义损失函数和优化器
-# criterion = nn.CrossEntropyLoss()
-criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
+
+# 交叉熵损失函数
+criterion = nn.CrossEntropyLoss()
+# focal loss 损失函数
+# criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
 optimizer = optim.Adam(model.parameters(), lr=0.00001) # 使用最基本的，
 scheduler = lr_scheduler.StepLR(optimizer, step_size=21, gamma=0.1)
 num_epochs = 64
+# scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=0.000001)
 
 '''早停相关'''
 best_val_loss = float('inf')  # 初始化最佳验证损失

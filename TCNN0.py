@@ -38,6 +38,15 @@ class TCNN0(nn.Module):
         # fc2为全连接层，128为输入通道数，2为输出通道数
         self.fc2 = nn.Linear(128, 2)
         self.dropout = nn.Dropout(0.3)
+        
+        # 卷积层初始化
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                # 随机初始化卷积核权重
+                nn.init.xavier_uniform_(m.weight)
+                # 打印卷积核权重
+                print("Conv1d Weight is :")
+                print(m.weight)
 
 
     def forward(self, x):
