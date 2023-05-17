@@ -1,5 +1,4 @@
 import librosa
-from pydub import AudioSegment
 import soundfile as sf
 import numpy as np
 import os
@@ -7,14 +6,11 @@ import torch
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
 
-import torch.utils.data as data
-from torch import nn, optim
+from torch import optim
 import torch.optim.lr_scheduler as lr_scheduler
 
 # TCNN 模型
-from TCNN1 import TCNN1
-from TCNN0 import TCNN0
-from TCNN2 import TCNN2
+from model.TCNN2 import TCNN2
 
 # 绘图
 import matplotlib.pyplot as plt
@@ -22,7 +18,8 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import confusion_matrix
 
 # 损失函数
-import focalloss
+from loss_function import focalloss
+
 
 def preprocess_data(audio_file_path):
     '''将音频数据转化为numpy数组'''
@@ -384,4 +381,4 @@ train(best_val_loss, patience, no_improvement_count, scheduler, model, train_dat
 test(model, test_dataloader, criterion)
 
 # 保存模型参数
-torch.save(model.state_dict(), 'model.pth')
+torch.save(model.state_dict(), 'pth_files/model.pth')

@@ -1,0 +1,20 @@
+batch_size: 64
+num_epochs: 64
+learning_rate: 1e-05
+patience: 10
+certerion: FocalLoss()
+optimizer: Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 1e-05
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0
+)
+scheduler: <torch.optim.lr_scheduler.CosineAnnealingLR object at 0x7ff86bd78fd0>

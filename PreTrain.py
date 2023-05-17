@@ -1,5 +1,4 @@
 import librosa
-from pydub import AudioSegment
 import soundfile as sf
 import numpy as np
 import os
@@ -7,24 +6,19 @@ import torch
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
 
-
-import torch.utils.data as data
-from torch import nn, optim
+from torch import optim
 import torch.optim.lr_scheduler as lr_scheduler
 
 # TCNN 模型
-from TCNN1 import TCNN1
-from TCNN0 import TCNN0
-from TCNN2 import TCNN2
-from TCNN3 import TCNN3
-from TCNN4 import TCNN4
+from model.TCNN4 import TCNN4
 # 绘图
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import confusion_matrix
 
 # 损失函数
-import focalloss
+from loss_function import focalloss
+
 
 def preprocess_data(audio_file_path):
     '''将音频数据转化为numpy数组'''
@@ -364,9 +358,9 @@ model = TCNN4()
 # 定义损失函数和优化器
 
 # 交叉熵损失函数
-criterion = nn.CrossEntropyLoss()
+# criterion = nn.CrossEntropyLoss()
 # focal loss 损失函数
-# criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
+criterion = focalloss.FocalLoss(gamma=1, alpha=0.5)
 optimizer = optim.Adam(model.parameters(), lr=0.00001) # 使用最基本的，
 scheduler = lr_scheduler.StepLR(optimizer, step_size=21, gamma=0.1)
 num_epochs = 64
@@ -385,4 +379,4 @@ train(best_val_loss, patience, no_improvement_count, scheduler, model, train_dat
 test(model, test_dataloader, criterion)
 
 # 保存模型参数
-torch.save(model.state_dict(), 'pretrainmodel.pth')
+torch.save(model.state_dict(), 'pth_files/pretrainmodel.pth')
