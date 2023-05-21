@@ -11,13 +11,13 @@ from sklearn.metrics import roc_curve, auc
 # 保存超参数
 """
 
-def save_superParam2text(path, netname, batch_size, num_epochs, learning_rate, patience, certerion, optimizer, scheduler, timestampe):
+def save_hyperParam2text(path, netname, batch_size, num_epochs, learning_rate, patience, certerion, optimizer, scheduler, timestampe):
     # 保存超参数
     # 获取当前脚本文件的路径
     script_path = os.path.abspath(__file__)
     # 获取当前脚本文件的上级目录
     parent_dir = os.path.dirname(script_path)
-    with open(path + timestampe +  '-' + netname + '-' + '-superParam.txt', 'w') as f:
+    with open(path + timestampe +  '-' + netname + '-' + '-hyperParam.txt', 'w') as f:
         f.write('batch_size: ' + str(batch_size) + '\n')
         f.write('num_epochs: ' + str(num_epochs) + '\n')
         f.write('learning_rate: ' + str(learning_rate) + '\n')
@@ -26,6 +26,16 @@ def save_superParam2text(path, netname, batch_size, num_epochs, learning_rate, p
         f.write('optimizer: ' + str(optimizer) + '\n')
         f.write('scheduler: ' + str(scheduler) + '\n')
         f.close()
+
+def save_train_val_info(k_num, path, info):
+    log_file = path
+
+    if not os.path.exists(log_file):
+        with open(log_file, "w") as file:
+            file.write('k=' + str(k_num) + ' ' + info)
+    else:
+        with open(log_file, "a") as file:
+            file.write('k=' + str(k_num) + ' ' + info)
 
 """
 # 绘制混淆矩阵
@@ -67,6 +77,8 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
     plt.subplots_adjust(left=0.12, right=0.95, bottom=0.2, top=0.9)
     # plt.show()
     plt.savefig(path)
+    plt.close()
+
 def ROC_k(k, labels_k, pre_score_k, timestampe, path):
     avg_x = []
     avg_y = []
@@ -154,4 +166,4 @@ def ROC_k(k, labels_k, pre_score_k, timestampe, path):
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
     plt.savefig(path + 'TCNN4' + "_model_ROC_" + str(timestampe) + ".jpg")
-    plt.show()
+    plt.close()

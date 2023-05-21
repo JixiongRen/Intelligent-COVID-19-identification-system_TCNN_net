@@ -76,7 +76,7 @@ class TCNN4(nn.Module):
         self.pool10 = nn.MaxPool1d(kernel_size=5, stride=2)
         #
         self.fc1 = nn.Linear(128 * 2, 128)
-        self.dropout1 = nn.Dropout(0.3)
+        self.dropout1 = nn.Dropout(0.4) 
         self.dropout2 = nn.Dropout(0.3)
         self.relu4 = nn.ReLU()
         self.fc2 = nn.Linear(128, 2)

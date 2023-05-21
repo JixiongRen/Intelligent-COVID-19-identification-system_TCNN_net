@@ -1,11 +1,12 @@
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from ModuleFunctions import toolsFun
 
 """
 # 训练函数
 """
-def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs):
+def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs, save_info_path, k_num, save_graph_path):
     """训练与验证函数的定义"""
     # 定义一些列表用于存储训练过程中各个epochs的loss和acc
     train_losses = []
@@ -64,8 +65,11 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
             val_acc += torch.sum(preds == label.data)
         val_loss /= len(val_loader.dataset)
         val_acc /= len(val_loader.dataset)
-        print('\nEpoch [{}/{}], train_loss: {:.4f}, train_acc: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}\n'
-              .format(epoch + 1, num_epochs, train_loss, train_acc, val_loss, val_acc))
+        info = str('Epoch [{}/{}], train_loss: {:.4f}, train_acc: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}\n'
+            .format(epoch + 1, num_epochs, train_loss, train_acc, val_loss, val_acc))
+        print(info)
+        # 将训练结果存入txt
+        toolsFun.save_train_val_info(k_num, save_info_path, info)
 
         '''在每个epoch之后将该轮的loss与acc存入列表'''
         # 计算训练集的损失和准确率
@@ -96,7 +100,9 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
     plt.xlabel('Epoch')
     plt.ylabel('LOSS')
     plt.legend()
-    plt.show()
+    plt.savefig(save_graph_path + '/' +  str(k_num) +'-fold-loss_curve.jpg')
+    plt.close()
+
 
     # 绘制准确率曲线
     plt.figure()
@@ -105,4 +111,6 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
     plt.xlabel('Epoch')
     plt.ylabel('ACC')
     plt.legend()
-    plt.show()
+    plt.savefig(save_graph_path + '/' +  str(k_num) +'-fold-acc_curve.jpg')
+    plt.close()
+

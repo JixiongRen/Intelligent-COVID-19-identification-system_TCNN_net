@@ -1,5 +1,6 @@
 """--------------------------------------------导入包-------------------------------------------"""
 from datetime import datetime
+import os
 import numpy as np
 import torch
 from sklearn.model_selection import KFold
@@ -50,7 +51,13 @@ k = 5
 kf = KFold(n_splits=k, shuffle=True, random_state=34)
 k_num = 0
 best_acc_all = 0
-for train_index, val_index in kf.split(train_val_dataset):
+
+# 创建文件夹用于保存每一折的图像
+folder_name = 'figs/graphs_for_each_fold-' + str(timestampe)
+if not os.path.exists(folder_name):
+    os.makedirs(folder_name)
+
+for train_index, val_index in kf.split(train_val_dataset): # type: ignore
     best_acc = 0.0
     '''每一折实例化新的模型'''
     # 加载模型
@@ -87,27 +94,63 @@ for train_index, val_index in kf.split(train_val_dataset):
     print('\n')
     print("-" * 30)
     print("第{}折验证".format(k_num))
-    train_fold = torch.utils.data.dataset.Subset(train_val_dataset, train_index)
-    val_fold = torch.utils.data.dataset.Subset(train_val_dataset, val_index)
+    train_fold = torch.utils.data.dataset.Subset(train_val_dataset, train_index) # type: ignore
+    val_fold = torch.utils.data.dataset.Subset(train_val_dataset, val_index) # type: ignore
     # 计算训练集,验证集,测试集的大小
     train_num = len(train_fold)
     val_num = len(val_fold)
-    # 打包成DataLoader类型 用于 训练
+    # 打包成DataLoader类型用于训练
     train_dataloader = DataLoader(dataset=train_fold, batch_size=batch_size, shuffle=True, drop_last=True)
     val_dataloader = DataLoader(dataset=val_fold, batch_size=batch_size, shuffle=True, drop_last=True)
     test_dataloader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
     if k_num == 1:
         # 保存参数
-        toolsFun.save_superParam2text('superParam/', 'TCNN4', batch_size, num_epochs, lr, patience, criterion, optimizer, scheduler, timestampe)
+        toolsFun.save_hyperParam2text('hyperParam/', 
+                                      'TCNN4', 
+                                      batch_size, 
+                                      num_epochs, 
+                                      lr, 
+                                      patience, 
+                                      criterion, 
+                                      optimizer, 
+                                      scheduler, 
+                                      timestampe)
     # 训练
-    trainFun.train(best_val_loss, patience, no_improvement_count, scheduler, model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs)
+    trainFun.train(best_val_loss,
+                   patience,
+                   no_improvement_count,
+                   scheduler,
+                   model,
+                   train_dataloader,
+                   val_dataloader,
+                   criterion,
+                   optimizer,
+                   num_epochs,
+                   'train_info/' + str(timestampe) + '-train_val_test_info.txt',
+                   k_num,
+                   folder_name)
     # 验证
-    testFun.test(pre_score_k, labels_k, model, test_dataloader, criterion, k_num, cnf_matrix)
+    testFun.test(pre_score_k,
+                 labels_k, model,
+                 test_dataloader,
+                 criterion,
+                 k_num,
+                 cnf_matrix,
+                 'train_info/' + str(timestampe) + '-train_val_test_info.txt',
+                 folder_name)
 
 # 绘制 ROC
-toolsFun.ROC_k(k, labels_k, pre_score_k, timestampe, 'ROC_k5/')
+toolsFun.ROC_k(k,
+               labels_k,
+               pre_score_k,
+               timestampe,
+               'ROC_k5/')
 # 绘制混淆矩阵
-toolsFun.plot_confusion_matrix(cnf_matrix, classes=['negative', 'positive'], normalize=False, title='Normalized confusion matrix', path='ConfusionMartix_k5/cm_k5_' + timestampe + '.jpg')
+toolsFun.plot_confusion_matrix(cnf_matrix,
+                               classes=['negative', 'positive'],
+                               normalize=False,
+                               title='Normalized confusion matrix',
+                               path='ConfusionMartix_k5/cm_k5_' + timestampe + '.jpg')
 # 保存模型参数
-torch.save(model.state_dict(), 'pth_files/model.pth')
+torch.save(model.state_dict(), 'pth_files/model.pth') # type: ignore

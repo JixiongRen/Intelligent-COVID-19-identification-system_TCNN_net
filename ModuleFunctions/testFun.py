@@ -3,6 +3,7 @@ import torch
 # 绘图
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
+from ModuleFunctions import toolsFun
 
 
 """
@@ -11,7 +12,7 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import confusion_matrix
 
 
-def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix):
+def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix, save_info_path, save_graph_path):
     '''测试函数'''
     # 存储预测概率分数和实际标签
     y_preds = []
@@ -55,6 +56,8 @@ def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix)
         test_loss /= len(test_loader.dataset)
         test_acc /= len(test_loader.dataset)
         print('Test Loss: {:.4f}, Test Acc: {:.4f}'.format(test_loss, test_acc))
+        info = 'Test Loss: {:.4f}, Test Acc: {:.4f}\n'.format(test_loss, test_acc)
+        toolsFun.save_train_val_info(k_num, save_info_path, info)
     # 保存k折ROC参数
     pre_core_k.append(y_scores)
     labels_k.append(y_true)
@@ -71,13 +74,16 @@ def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix)
     plt.ylabel('True Positive Rate')
     plt.title(str(k_num) + ' ROC Curve')
     plt.legend(loc='lower right')
-    plt.show()
+    plt.savefig(save_graph_path + '/' +  str(k_num) +'-fold-roc_curve.jpg')
+    plt.close()
+
 
     '''混淆矩阵'''
     # 计算混淆矩阵
     confusion_mat = confusion_matrix(y_true, y_preds)
     # 绘制混淆矩阵
     classes = ['negative', 'positive']
+    plt.figure()
     plt.imshow(confusion_mat, interpolation='nearest', cmap=plt.cm.Blues) # type: ignore
     plt.title(str(k_num) + ' Confusion Matrix')
     plt.colorbar()
@@ -86,7 +92,6 @@ def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix)
     plt.yticks(tick_marks, classes, rotation=45)
     plt.xlabel('Predicted Label')
     plt.ylabel('True Label')
-
     # 添加数值标签
     thresh = confusion_mat.max() / 2.
     for i in range(confusion_mat.shape[0]):
@@ -97,4 +102,5 @@ def test(pre_core_k, labels_k, model, test_loader, criterion, k_num, cnf_matrix)
                      fontdict={'fontsize': 40})
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(save_graph_path + '/' +  str(k_num) +'-fold-cm-figure.jpg')
+    plt.close()
