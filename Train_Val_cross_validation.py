@@ -53,12 +53,15 @@ k_num = 0
 best_acc_all = 0
 
 # 创建文件夹用于保存每一折的图像
-folder_name = 'figs/graphs_for_each_fold-' + str(timestampe)
-if not os.path.exists(folder_name):
-    os.makedirs(folder_name)
+graphs_folder_name = 'figs/graphs_for_each_fold-' + str(timestampe)
+if not os.path.exists(graphs_folder_name):
+    os.makedirs(graphs_folder_name)
 
+# 用于保存每一折的最好准确率的列表
+best_acc_for_each_fold = []
+# 定义文件夹路径和特定字符串
+pth_folder_path = 'pth_files/' + str(timestampe) + 'model_pths'
 for train_index, val_index in kf.split(train_val_dataset): # type: ignore
-    best_acc = 0.0
     '''每一折实例化新的模型'''
     # 加载模型
     model = TCNN4()
@@ -81,7 +84,7 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
     # StepLR()学习率调整策略，每30个epoch学习率变为原来的0.1
     # scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
     # CosineAnnealingLR()学习率调整策略，每个epoch学习率都在变化，变化范围为[0.000001, 0.00001]
-    num_epochs = 64
+    num_epochs = 25
     scheduler = CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=0.000001)
 
     '''早停的设置'''
@@ -116,8 +119,13 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
                                       optimizer, 
                                       scheduler, 
                                       timestampe)
+        
+
+    if not os.path.exists(pth_folder_path):
+        os.makedirs(pth_folder_path)
     # 训练
-    trainFun.train(best_val_loss,
+    best_acc_for_each_fold.append(
+        trainFun.train(best_val_loss,
                    patience,
                    no_improvement_count,
                    scheduler,
@@ -129,16 +137,19 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
                    num_epochs,
                    'train_info/' + str(timestampe) + '-train_val_test_info.txt',
                    k_num,
-                   folder_name)
+                   graphs_folder_name,
+                   pth_folder_path))    
+
     # 验证
     testFun.test(pre_score_k,
-                 labels_k, model,
+                 labels_k, 
+                 model,
                  test_dataloader,
                  criterion,
                  k_num,
                  cnf_matrix,
                  'train_info/' + str(timestampe) + '-train_val_test_info.txt',
-                 folder_name)
+                 graphs_folder_name)
 
 # 绘制 ROC
 toolsFun.ROC_k(k,
@@ -154,3 +165,18 @@ toolsFun.plot_confusion_matrix(cnf_matrix,
                                path='ConfusionMartix_k5/cm_k5_' + timestampe + '.jpg')
 # 保存模型参数
 torch.save(model.state_dict(), 'pth_files/model.pth') # type: ignore
+
+'''将五折中最好的参数重命名'''
+best_acc_for_each_fold_index = best_acc_for_each_fold.index(max(best_acc_for_each_fold))
+search_string = 'k=' + str(best_acc_for_each_fold_index + 1) # 找到最大的准确率对应的折数
+# 遍历文件夹下的所有文件
+for filename in os.listdir(pth_folder_path):
+    # 检查文件名是否包含特定字符串
+    if search_string in filename:
+        # 构建旧文件路径
+        old_file_path = os.path.join(pth_folder_path, filename)
+        # 构建新文件路径（这里假设您要将特定字符串替换为新字符串）
+        new_filename = filename.replace(search_string, 'best_in_5folds-val_acc=' + str(max(best_acc_for_each_fold)))
+        new_file_path = os.path.join(pth_folder_path, new_filename)
+        # 重命名文件
+        os.rename(old_file_path, new_file_path)

@@ -6,7 +6,7 @@ from ModuleFunctions import toolsFun
 """
 # 训练函数
 """
-def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs, save_info_path, k_num, save_graph_path):
+def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs, save_info_path, k_num, save_graph_path, save_pth_path=None):
     """训练与验证函数的定义"""
     # 定义一些列表用于存储训练过程中各个epochs的loss和acc
     train_losses = []
@@ -20,7 +20,7 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
     # 训练循环
     for epoch in range(num_epochs):
         print('-' * 30, '\n', '共', num_epochs, '个epoch, 第', epoch + 1, '个epoch', '\n')
-        loss_min = float('inf')
+        best_val_acc = 0.0
         train_loss = 0.0
         train_loss_per_batch = 0.0
         train_acc = 0.0
@@ -70,6 +70,11 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         print(info)
         # 将训练结果存入txt
         toolsFun.save_train_val_info(k_num, save_info_path, info)
+        
+        if (float(val_acc) > best_val_acc) & (epoch+1)>0:
+            best_val_acc = float(val_acc)
+            # 保存模型
+            torch.save(model, str(save_pth_path) + '/' + 'k='+ str(k_num) + '-best_val_acc-model.pth')
 
         '''在每个epoch之后将该轮的loss与acc存入列表'''
         # 计算训练集的损失和准确率
@@ -113,4 +118,5 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
     plt.legend()
     plt.savefig(save_graph_path + '/' +  str(k_num) +'-fold-acc_curve.jpg')
     plt.close()
-
+    
+    return float(best_val_acc)

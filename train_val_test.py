@@ -162,7 +162,7 @@ test_dataset = MyDataset(test_data, test_label)
 test_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 
 
-def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs):
+def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs, k_num, pth_path=None):
     '''训练与验证函数的定义'''
     # 定义一些列表用于存储训练过程中各个epochs的loss和acc
     train_losses = []
@@ -179,6 +179,7 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
     # 训练循环
     for epoch in range(num_epochs):
         loss_min = float('inf')
+        best_val_acc = 0.0
         train_loss = 0.0
         train_loss_per_batch = 0.0
         train_acc = 0.0
@@ -230,7 +231,11 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
 
         print('Epoch [{}/{}], train_loss: {:.4f}, train_acc: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}\n'
               .format(epoch + 1, num_epochs, train_loss, train_acc, val_loss, val_acc))
-
+        
+        if (epoch+1>18) & (val_acc > best_val_acc):
+            best_val_acc = val_acc
+            # 保存模型
+            torch.save(model, str(pth_path) + str(k_num)  + '-best_val_acc-model.pth')
         '''在每个epoch之后将该轮的loss与acc存入列表'''
         # 计算训练集的损失和准确率
         train_losses.append(train_loss)

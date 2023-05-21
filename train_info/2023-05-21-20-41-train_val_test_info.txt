@@ -1,0 +1,10 @@
+k=1 Epoch [1/25], train_loss: 0.1681, train_acc: 0.5803, val_loss: 0.1628, val_acc: 0.6233
+k=1 Epoch [2/25], train_loss: 0.1632, train_acc: 0.6184, val_loss: 0.1606, val_acc: 0.6323
+k=1 Epoch [3/25], train_loss: 0.1597, train_acc: 0.6378, val_loss: 0.1598, val_acc: 0.6335
+k=1 Epoch [4/25], train_loss: 0.1584, train_acc: 0.6478, val_loss: 0.1581, val_acc: 0.6515
+k=1 Epoch [5/25], train_loss: 0.1566, train_acc: 0.6538, val_loss: 0.1558, val_acc: 0.6561
+k=1 Epoch [6/25], train_loss: 0.1532, train_acc: 0.6640, val_loss: 0.1571, val_acc: 0.6438
+k=1 Epoch [7/25], train_loss: 0.1518, train_acc: 0.6747, val_loss: 0.1552, val_acc: 0.6679
+k=1 Epoch [8/25], train_loss: 0.1487, train_acc: 0.6829, val_loss: 0.1552, val_acc: 0.6478
+k=1 Epoch [9/25], train_loss: 0.1471, train_acc: 0.6909, val_loss: 0.1522, val_acc: 0.6682
+k=1 Epoch [10/25], train_loss: 0.1446, train_acc: 0.6975, val_loss: 0.1558, val_acc: 0.6435
