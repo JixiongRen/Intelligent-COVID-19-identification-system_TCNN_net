@@ -76,7 +76,7 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
     plt.ylabel('True label', fontdict={'fontsize': 20})
     plt.subplots_adjust(left=0.12, right=0.95, bottom=0.2, top=0.9)
     # plt.show()
-    plt.savefig(path)
+    plt.savefig(path, format="svg")
     plt.close()
 
 def ROC_k(k, labels_k, pre_score_k, timestampe, path):
@@ -165,5 +165,5 @@ def ROC_k(k, labels_k, pre_score_k, timestampe, path):
     plt.ylabel('True Positive Rate')  # 可以使用中文，但需要导入一些库即字体
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
-    plt.savefig(path + 'TCNN4' + "_model_ROC_" + str(timestampe) + ".jpg")
+    plt.savefig(path + 'TCNN4' + "_model_ROC_" + str(timestampe) + ".svg", format="svg")
     plt.close()

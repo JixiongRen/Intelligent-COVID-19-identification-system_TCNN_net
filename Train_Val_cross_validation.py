@@ -84,7 +84,7 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
     # StepLR()学习率调整策略，每30个epoch学习率变为原来的0.1
     # scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
     # CosineAnnealingLR()学习率调整策略，每个epoch学习率都在变化，变化范围为[0.000001, 0.00001]
-    num_epochs = 25
+    num_epochs = 10
     scheduler = CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=0.000001)
 
     '''早停的设置'''
@@ -125,6 +125,7 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
         os.makedirs(pth_folder_path)
     # 训练
     best_acc_for_each_fold.append(
+    # print(
         trainFun.train(best_val_loss,
                    patience,
                    no_improvement_count,
@@ -139,7 +140,6 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
                    k_num,
                    graphs_folder_name,
                    pth_folder_path))    
-
     # 验证
     testFun.test(pre_score_k,
                  labels_k, 
@@ -162,7 +162,7 @@ toolsFun.plot_confusion_matrix(cnf_matrix,
                                classes=['negative', 'positive'],
                                normalize=False,
                                title='Normalized confusion matrix',
-                               path='ConfusionMartix_k5/cm_k5_' + timestampe + '.jpg')
+                               path='ConfusionMartix_k5/cm_k5_' + timestampe + '.svg')
 # 保存模型参数
 torch.save(model.state_dict(), 'pth_files/model.pth') # type: ignore
 

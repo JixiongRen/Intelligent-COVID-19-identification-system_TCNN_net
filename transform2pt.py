@@ -4,7 +4,7 @@ import torch.utils.data.distributed
 model_TCNN_pt = 'tcnn4_for_android.pt'
 
 '加载pytorch模型'
-model_TCNN_pth = torch.load('pth_files/model.pth')
+model_TCNN_pth = torch.load('pth_files/2023-05-22-20-01model_pths/best_in_5folds-val_acc=0.6421052813529968-best_val_acc-model.pth')
 
 '使模型在GPU上运行'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

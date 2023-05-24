@@ -1,0 +1,4 @@
+k=1 Epoch [1/2], train_loss: 0.1691, train_acc: 0.5875, val_loss: 0.1629, val_acc: 0.6156
+k=1 Epoch [2/2], train_loss: 0.1634, train_acc: 0.6164, val_loss: 0.1607, val_acc: 0.6357
+k=1 Test Loss: 0.1623, Test Acc: 0.6377
+k=2 Epoch [1/2], train_loss: 0.1697, train_acc: 0.5738, val_loss: 0.1624, val_acc: 0.6220

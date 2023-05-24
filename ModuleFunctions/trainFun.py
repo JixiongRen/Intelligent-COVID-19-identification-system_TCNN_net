@@ -9,6 +9,7 @@ from ModuleFunctions import toolsFun
 def train(best_val_loss, patience, no_improvement_count, scheduler, model, train_loader, val_loader, criterion, optimizer, num_epochs, save_info_path, k_num, save_graph_path, save_pth_path=None):
     """训练与验证函数的定义"""
     # 定义一些列表用于存储训练过程中各个epochs的loss和acc
+    global best_val_acc
     train_losses = []
     train_accuracies = []
     val_losses = []
@@ -46,8 +47,8 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
             train_loss += loss.item() * data.size(0)
             train_loss_per_batch += loss.item() * data.size(0)
             _, preds = torch.max(outputs, 1)
-            train_acc += torch.sum(preds == label.data)
-            train_acc_per_batch += torch.sum(preds == label.data)
+            train_acc += torch.sum(preds == label.data) # type: ignore
+            train_acc_per_batch += torch.sum(preds == label.data) # type: ignore
             # 更新学习率
             scheduler.step()
         train_loss /= len(train_loader.dataset)
@@ -71,7 +72,7 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         # 将训练结果存入txt
         toolsFun.save_train_val_info(k_num, save_info_path, info)
         
-        if (float(val_acc) > best_val_acc) & (epoch+1)>0:
+        if val_acc > best_val_acc:
             best_val_acc = float(val_acc)
             # 保存模型
             torch.save(model, str(save_pth_path) + '/' + 'k='+ str(k_num) + '-best_val_acc-model.pth')

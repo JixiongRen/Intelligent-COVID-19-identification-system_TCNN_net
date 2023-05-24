@@ -1,0 +1,15 @@
+k=1 Epoch [1/2], train_loss: 0.1686, train_acc: 0.5821, val_loss: 0.1627, val_acc: 0.6255
+k=1 Epoch [2/2], train_loss: 0.1629, train_acc: 0.6206, val_loss: 0.1606, val_acc: 0.6264
+k=1 Test Loss: 0.1625, Test Acc: 0.6315
+k=2 Epoch [1/2], train_loss: 0.1691, train_acc: 0.5808, val_loss: 0.1620, val_acc: 0.6263
+k=2 Epoch [2/2], train_loss: 0.1639, train_acc: 0.6130, val_loss: 0.1599, val_acc: 0.6337
+k=2 Test Loss: 0.1627, Test Acc: 0.6382
+k=3 Epoch [1/2], train_loss: 0.1693, train_acc: 0.5730, val_loss: 0.1630, val_acc: 0.6158
+k=3 Epoch [2/2], train_loss: 0.1637, train_acc: 0.6119, val_loss: 0.1609, val_acc: 0.6406
+k=3 Test Loss: 0.1633, Test Acc: 0.6366
+k=4 Epoch [1/2], train_loss: 0.1689, train_acc: 0.5806, val_loss: 0.1621, val_acc: 0.6173
+k=4 Epoch [2/2], train_loss: 0.1630, train_acc: 0.6176, val_loss: 0.1605, val_acc: 0.6322
+k=4 Test Loss: 0.1627, Test Acc: 0.6405
+k=5 Epoch [1/2], train_loss: 0.1686, train_acc: 0.5778, val_loss: 0.1627, val_acc: 0.6241
+k=5 Epoch [2/2], train_loss: 0.1622, train_acc: 0.6211, val_loss: 0.1602, val_acc: 0.6328
+k=5 Test Loss: 0.1629, Test Acc: 0.6360
