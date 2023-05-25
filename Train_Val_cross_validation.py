@@ -27,7 +27,7 @@ train_val_data, train_val_label = dataPreprocessFun.path2target(r'/home/renjixio
 test_data, test_label = dataPreprocessFun.path2target(r'/home/renjixiong/Model_Data/DataSet/Coswara_increased/test')
 
 '''定义部分超参数'''
-batch_size = 64
+batch_size = 32
 
 '''打包成DataSet'''
 # 训练集
@@ -84,7 +84,7 @@ for train_index, val_index in kf.split(train_val_dataset): # type: ignore
     # StepLR()学习率调整策略，每30个epoch学习率变为原来的0.1
     # scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
     # CosineAnnealingLR()学习率调整策略，每个epoch学习率都在变化，变化范围为[0.000001, 0.00001]
-    num_epochs = 10
+    num_epochs = 30
     scheduler = CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=0.000001)
 
     '''早停的设置'''
