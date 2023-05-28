@@ -29,7 +29,7 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         val_loss = 0.0
         val_acc = 0.0
         model.train()
-        for i, (data, label) in tqdm(enumerate(train_loader), total=len(train_loader), desc='训练模型', ncols=80, colour='red'):
+        for i, (data, label) in tqdm(enumerate(train_loader), total=len(train_loader), desc='训练模型', ncols=80, colour='white'):
             data = data.to(device)
             label = label.to(device)
             optimizer.zero_grad()
@@ -55,7 +55,7 @@ def train(best_val_loss, patience, no_improvement_count, scheduler, model, train
         train_acc /= len(train_loader.dataset)
         # 验证
         model.eval()
-        for i, (data, label) in tqdm(enumerate(val_loader), total=len(val_loader), desc='验证模型', ncols=80, colour='green'):
+        for i, (data, label) in tqdm(enumerate(val_loader), total=len(val_loader), desc='验证模型', ncols=80, colour='white'):
             data = data.to(device)
             label = label.to(device)
             outputs = model(data)
