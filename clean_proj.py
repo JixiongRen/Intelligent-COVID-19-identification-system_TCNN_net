@@ -47,11 +47,20 @@ def check_and_delete_files(folder_path, timestamp_list):
             print(f"Deleting file '{filename}'")
             os.remove(file_path)
 
+def remove_empty_folders(folder_path):
+    for root, dirs, files in os.walk(folder_path, topdown=False):
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            if not os.listdir(dir_path):  # 检查文件夹是否为空
+                os.rmdir(dir_path)
+                print(f"Deleted empty folder: {dir_path}")
+
 # 文件夹路径
 pth_folder = "pth_files/"
 figs_folder = "figs/"
 train_info_folder = "train_info/"
 hyperParam_folder = "hyperParam/"
+cm_k5_folder = "ConfusionMartix_k5/"
 
 # 检查并删除不符合要求的子文件夹
 check_and_delete_folders(pth_folder, roc_timestamp)
@@ -60,3 +69,9 @@ check_and_delete_folders(figs_folder, roc_timestamp)
 # 检查并删除不符合要求的文件
 check_and_delete_files(train_info_folder, roc_timestamp)
 check_and_delete_files(hyperParam_folder, roc_timestamp)
+check_and_delete_files(cm_k5_folder, roc_timestamp)
+
+# 清除空文件夹
+remove_empty_folders(pth_folder)
+remove_empty_folders(figs_folder)
+

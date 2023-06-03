@@ -1,1 +1,0 @@
-k=1 Epoch [1/1], train_loss: 0.1689, train_acc: 0.5778, val_loss: 0.1627, val_acc: 0.6162
