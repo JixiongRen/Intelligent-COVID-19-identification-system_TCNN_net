@@ -1,3 +1,10 @@
+"""_summary_
+这是一个清洁、整理项目文件的脚本。考虑到无效训练(因各种原因导致训练未完成)的存在，需要删除此类训练生成的不完全训练产生的残缺日志文件，
+包括 train_info, figs, hyperParam, pth_files, ROC_k5, ConfusionMartix_k5. 一般只要生成了五折交叉验证的ROC曲线，我们认为一轮完整
+的训练便结束了，所以本脚本提取到ROC_k5文件夹下的时间戳信息，并以此为据对其他文件夹作清洁。本脚本应定期执行以保证项目整洁可读。本脚本不
+会误删文件。
+"""
+
 import os
 import re
 
@@ -12,11 +19,6 @@ for filename in os.listdir(folder_path):
         if match:
             roc_fig_name.append(filename)
             roc_timestamp.append(match.group())
-
-print("ROC Figure Names:")
-print(roc_fig_name)
-print("ROC Timestamps:")
-print(roc_timestamp)
 
 def check_and_delete_folders(folder_path, timestamp_list):
     for subdir in os.listdir(folder_path):
